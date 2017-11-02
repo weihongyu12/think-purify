@@ -17,6 +17,7 @@
     "nyc": "^11.3.0"
   },
   "scripts": {
+    "lint": "eslint --fix index.js & eslint --fix lib/**.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
