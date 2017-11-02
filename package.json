@@ -1,0 +1,39 @@
+{
+  "name": "think-purify",
+  "version": "1.0.0",
+  "description": "Use the HTML5 Purify extension in ThinkJS",
+  "main": "index.js",
+  "dependencies": {
+    "html-purify": "^1.1.0",
+    "think-helper": "^1.0.22"
+  },
+  "devDependencies": {
+    "ava": "^0.23.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.10.0",
+    "eslint-config-think": "^1.0.2",
+    "nyc": "^11.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weihongyu12/think-purify.git"
+  },
+  "keywords": [
+    "thinkjs3",
+    "html-purify",
+    "xss",
+    "xss-filter",
+    "think-extend"
+  ],
+  "author": "weihongyu12",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/weihongyu12/think-purify/issues"
+  },
+  "homepage": "https://github.com/weihongyu12/think-purify#readme"
+}
