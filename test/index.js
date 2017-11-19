@@ -6,13 +6,13 @@ test('purify', t => {
   t.is(typeof purify, 'object');
 });
 
-test('purify whitelist', t => {
+test('purify whitelist tag', t => {
   const data = '<div>test</div>';
   const purify = thinkPurify.think.purify(data);
   t.is(purify, '<div>test</div>');
 });
 
-test('purify blacklist', t => {
+test('purify blacklist tag', t => {
   const data = '<div><iframe src="http://example.com"></iframe></div>';
   const purify = thinkPurify.think.purify(data);
   t.is(purify, '<div></div>');
