@@ -17,7 +17,7 @@ npm install think-purify --save
 const purify = require('think-purify')
 
 module.exports = [
- purify
+  purify
 ];
 ```
 ### Use in controller, context or think
@@ -25,7 +25,7 @@ module.exports = [
 ```javascript
 module.exports = class extends Base {
   indexAction() {
-    const html = this.post('html')
+    const html = this.post('html');
     const result = this.purify(html); // Filtering dangerous html tags and attributes
     return this.display();
   }
