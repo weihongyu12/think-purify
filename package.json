@@ -18,7 +18,7 @@
   },
   "scripts": {
     "lint": "eslint --fix index.js & eslint --fix lib/**.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint && nyc ava test/"
   },
   "repository": {
     "type": "git",
