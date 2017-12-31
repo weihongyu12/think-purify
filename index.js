@@ -9,6 +9,11 @@ module.exports = {
       return (new ThinkPurify()).purify(data);
     }
   },
+  service: {
+    purify: data => {
+      return (new ThinkPurify()).purify(data);
+    }
+  },
   context: {
     purify: data => {
       return (new ThinkPurify()).purify(data);
