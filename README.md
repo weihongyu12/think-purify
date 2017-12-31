@@ -21,7 +21,7 @@ module.exports = [
   purify
 ];
 ```
-### Use in controller, context or think
+### Use in controller, service, context or think
 
 ```javascript
 module.exports = class extends Base {
