@@ -29,3 +29,9 @@ test('purify controller', t => {
   const purify = thinkPurify.controller.purify(data);
   t.is(purify, '<div></div>');
 });
+
+test('purify service', t => {
+  const data = '<div><iframe src="http://example.com"></iframe></div>';
+  const purify = thinkPurify.service.purify(data);
+  t.is(purify, '<div></div>');
+});
