@@ -902,6 +902,153 @@ test('purify general #14', t => {
   t.is(purify, output);
 });
 
+test('purify general #15', t => {
+  const input = '<div style=3>number not string in style</div>';
+  const output = '<div>number not string in style</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #16', t => {
+  const input = '<div style="bogus: red; boguscolor :  green">prohibited style</div>';
+  const output = '<div style="bogus: red; boguscolor :  green">prohibited style</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #17', t => {
+  const input = '<div style=" color: blue">rodent 1 is ok</div>';
+  const output = '<div style=" color: blue">rodent 1 is ok</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #18', t => {
+  const input = "<div style=' color: blue;'>rodent 2 is ok</div>";
+  const output = '<div style=" color: blue;">rodent 2 is ok</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #19', t => {
+  const input = "<div style=' color: blue\";'>rodent 3 is malformed</div>";
+  const output = '<div>rodent 3 is malformed</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #20', t => {
+  const input = "<div style=' color: blue '>rodent 4 is ok</div>";
+  const output = '<div style=" color: blue ">rodent 4 is ok</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #21', t => {
+  const input = '<div style=" <script>do_evil();</script> ">script tags stripped</div>';
+  const output = '<div>script tags stripped</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #22', t => {
+  const input = '<div style="">null style attr</div>';
+  const output = '<div style="">null style attr</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #23', t => {
+  const input = '<div style=":">colon style attr</div>';
+  const output = '<div>colon style attr</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #24', t => {
+  const input = '<div style=>no style value at all</div>';
+  const output = '<div style="">no style value at all</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #25', t => {
+  const input = '<div style="color blue">colon not present</div>';
+  const output = '<div>colon not present</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #26', t => {
+  const input = '<div style="color = blue">punct not colon</div>';
+  const output = '<div>punct not colon</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #27', t => {
+  const input = '<div style="color">colon and attr missing</div>';
+  const output = '<div>colon and attr missing</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #28', t => {
+  const input = '<div style="color:">attr mising</div>';
+  const output = '<div>attr mising</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #29', t => {
+  const input = '<div style="color\\": blue">escaped quote in attr isnt really escaped</div>';
+  const output = '<div>escaped quote in attr isnt really escaped</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #30', t => {
+  const input = '<div style="color : blue\\"">escaped quote in val isnt really escaped</div>';
+  const output = '<div>escaped quote in val isnt really escaped</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #31', t => {
+  const input = '<div style=color:blue>unquoted style attribute</div>';
+  const output = '<div style="color:blue">unquoted style attribute</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #32', t => {
+  const input = '<div style="color:green blue">multiple values</div>';
+  const output = '<div style="color:green blue">multiple values</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #33', t => {
+  const input = '<div style="color:green bad( blue )">parenthesis test 1</div>';
+  const output = '<div style="color:green bad( blue )">parenthesis test 1</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #34', t => {
+  const input = '<div style="color:bad( blue ) green">parenthesis test 2</div>';
+  const output = '<div style="color:bad( blue ) green">parenthesis test 2</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #35', t => {
+  const input = '<div style="color:bad( blue green">parenthesis test 3</div>';
+  const output = '<div>parenthesis test 3</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
 test('purify context', t => {
   const input = '<form id="test"></form><button form="test" formaction="javascript:alert(1)">X</button>';
   const output = '<form id="test"></form><button form="test" formaction="x-javascript:alert(1)">X</button>';
