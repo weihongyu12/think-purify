@@ -349,6 +349,461 @@ test('purify html5sec #50', t => {
   t.is(purify, output);
 });
 
+test('purify html5sec #51', t => {
+  const input = '<object data="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="></object>';
+  const output = '<object data="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="></object>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #52', t => {
+  const input = '<embed src="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="></embed>';
+  const output = '<embed src="x-data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #53', t => {
+  const input = '<x style="behavior:url(test.sct)">';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #54', t => {
+  const input = '<xml id="xss" src="test.htc"></xml>\r\n<label dataformatas="html" datasrc="#xss" datafld="payload"></label>';
+  const output = '\n<label></label>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #55', t => {
+  const input = "<script>[{\'a\':Object.prototype.__defineSetter__(\'b\',function(){alert(arguments[0])}),\'b\':[\'secret\']}]</script>";
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #56', t => {
+  const input = '<video><source onerror="alert(1)">';
+  const output = '<video><source /></video>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #57', t => {
+  const input = '<video onerror="alert(1)"><source></source></video>';
+  const output = '<video><source /></video>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #58', t => {
+  const input = '<b <script>alert(1)//</script>0</script></b>';
+  const output = '<b>alert(1)//0</b>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #59', t => {
+  const input = '<b><script<b></b><alert(1)</script </b></b>';
+  const output = '<b></b>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #60', t => {
+  const input = '<div id="div1"><input value="``onmouseover=alert(1)"></div> <div id="div2"></div><script>document.getElementById("div2").innerHTML = document.getElementById("div1").innerHTML;</script>';
+  const output = '<div id="div1"><input value="``onmouseover=alert(1)" /></div> <div id="div2"></div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #61', t => {
+  const input = '<div style="[a]color[b]:[c]red">XXX</div>';
+  const output = '<div>XXX</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #62', t => {
+  const input = '<div style="\\63&#9\\06f&#10\\0006c&#12\\00006F&#13\\R:\\000072 Ed;color\\0\\bla:yellow\\0\\bla;col\\0\\00 \\&#xA0or:blue;">XXX</div>';
+  const output = '<div>XXX</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #63', t => {
+  const input = "<!-- IE 6-8 -->\r\n<x \'=\"foo\"><x foo=\'><img src=x onerror=alert(1)//\'>\r\n\r\n<!-- IE 6-9 -->\r\n<! \'=\"foo\"><x foo=\'><img src=x onerror=alert(2)//\'>\r\n<? \'=\"foo\"><x foo=\'><img src=x onerror=alert(3)//\'>";
+  const output = '\n\n\n\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #64', t => {
+  const input = '<embed src="javascript:alert(1)"></embed> // O10.10â†“, OM10.0â†“, GC6â†“, FF\r\n<img src="javascript:alert(2)">\r\n<image src="javascript:alert(2)"> // IE6, O10.10â†“, OM10.0â†“\r\n<script src="javascript:alert(3)"></script> // IE6, O11.01â†“, OM10.1â†“';
+  const output = '<embed src="x-javascript:alert(1)" /> // O10.10â†“, OM10.0â†“, GC6â†“, FF\n<img src="x-javascript:alert(2)" />\n // IE6, O10.10â†“, OM10.0â†“\n // IE6, O11.01â†“, OM10.1â†“';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #65', t => {
+  const input = '<!DOCTYPE x[<!ENTITY x SYSTEM "http://htmlsec.org/test.xxe">]><y>&x;</y>';
+  const output = ']>&x;';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #66', t => {
+  const input = '<svg onload="javascript:alert(1)" xmlns="http://www.w3.org/2000/svg"></svg>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #67', t => {
+  const input = "<?xml version=\"1.0\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"data:,%3Cxsl:transform version=\'1.0\' xmlns:xsl=\'http://www.w3.org/1999/XSL/Transform\' id=\'xss\'%3E%3Cxsl:output method=\'html\'/%3E%3Cxsl:template match=\'/\'%3E%3Cscript%3Ealert(1)%3C/script%3E%3C/xsl:template%3E%3C/xsl:transform%3E\"?>\n<root/>";
+  const output = '\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #68', t => {
+  const input = '<!DOCTYPE x [\r\n\t<!ATTLIST img xmlns CDATA "http://www.w3.org/1999/xhtml" src CDATA "xx:x"\r\n onerror CDATA "alert(1)"\r\n onload CDATA "alert(2)">\r\n]><img />';
+  const output = '\n]><img />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #69', t => {
+  const input = '<doc xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/1999/xhtml">\r\n\t<html:style /><x xlink:href="javascript:alert(1)" xlink:type="simple">XXX</x>\r\n</doc>';
+  const output = '\n\tXXX\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #70', t => {
+  const input = '<card xmlns="http://www.wapforum.org/2001/wml"><onevent type="ontimer"><go href="javascript:alert(1)"/></onevent><timer value="1"/></card>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #71', t => {
+  const input = '<div style=width:1px;filter:glow onfilterchange=alert(1)>x</div>';
+  const output = '<div style="width:1px;filter:glow">x</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #72', t => {
+  const input = '<// style=x:expression\\28write(1)\\29>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #73', t => {
+  const input = '<form><button formaction="javascript:alert(1)">X</button>';
+  const output = '<form><button formaction="x-javascript:alert(1)">X</button></form>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #74', t => {
+  const input = '<event-source src="event.php" onload="alert(1)">';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #75', t => {
+  const input = '<a href="javascript:alert(1)"><event-source src="data:application/x-dom-event-stream,Event:click%0Adata:XXX%0A%0A" /></a>';
+  const output = '<a href="x-javascript:alert(1)"></a>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #76', t => {
+  const input = '<script<{alert(1)}/></script </>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #77', t => {
+  const input = '<?xml-stylesheet type="text/css"?><!DOCTYPE x SYSTEM "test.dtd"><x>&x;</x>';
+  const output = '&x;';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #78', t => {
+  const input = '<?xml-stylesheet type="text/css"?><root style="x:expression(write(1))"/>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #79', t => {
+  const input = '<?xml-stylesheet type="text/xsl" href="#"?><img xmlns="x-schema:test.xdr"/>';
+  const output = '<img xmlns="x-x-schema:test.xdr" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #80', t => {
+  const input = '<object allowscriptaccess="always" data="test.swf"></object>';
+  const output = '<object data="test.swf"></object>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #81', t => {
+  const input = '<style>*{x:ï½…ï½˜ï½ï½’ï½…ï½“ï½“ï½‰ï½ï½Ž(write(1))}</style>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #82', t => {
+  const input = '<x xmlns:xlink="http://www.w3.org/1999/xlink" xlink:actuate="onLoad" xlink:href="javascript:alert(1)" xlink:type="simple"/>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #83', t => {
+  const input = '<?xml-stylesheet type="text/css" href="data:,*%7bx:expression(write(2));%7d"?>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #84', t => {
+  const input = '<x:template xmlns:x="http://www.wapforum.org/2001/wml" x:ontimer="$(x:unesc)j$(y:escape)a$(z:noecs)v$(x)a$(y)s$(z)cript$x:alert(1)"><x:timer value="1"/></x:template>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #85', t => {
+  const input = '<x xmlns:ev="http://www.w3.org/2001/xml-events" ev:event="load" ev:handler="javascript:alert(1)//#x"/>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #86', t => {
+  const input = '<x xmlns:ev="http://www.w3.org/2001/xml-events" ev:event="load" ev:handler="test.evt#x"/>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #87', t => {
+  const input = '<body oninput=alert(1)><input autofocus>';
+  const output = '<body><input autofocus /></body>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #88', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg">\n<a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="javascript:alert(1)"><rect width="1000" height="1000" fill="white"/></a>\n</svg>';
+  const output = '\n<a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="x-javascript:alert(1)"></a>\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #89', t => {
+  const input = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n\n<animation xlink:href=\"javascript:alert(1)\"/>\n<animation xlink:href=\"data:text/xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' onload=\'alert(1)\'%3E%3C/svg%3E\"/>\n\n<image xlink:href=\"data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' onload=\'alert(1)\'%3E%3C/svg%3E\"/>\n\n<foreignObject xlink:href=\"javascript:alert(1)\"/>\n<foreignObject xlink:href=\"data:text/xml,%3Cscript xmlns=\'http://www.w3.org/1999/xhtml\'%3Ealert(1)%3C/script%3E\"/>\n\n</svg>";
+  const output = '\n\n\n\n\n\n\n\n\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #90', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg">\n<set attributeName="onmouseover" to="alert(1)"/>\n<animate attributeName="onunload" to="alert(1)"/>\n</svg>';
+  const output = '\n\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #91', t => {
+  const input = '<!-- Up to Opera 10.63 -->\r\n<div style=content:url(test2.svg)></div>\r\n\r\n<!-- Up to Opera 11.64 - see link below -->\r\n\r\n<!-- Up to Opera 12.x -->\r\n<div style="background:url(test5.svg)">PRESS ENTER</div>';
+  const output = '\n<div style="content:url(test2.svg)"></div>\n\n\n\n\n<div style="background:url(test5.svg)">PRESS ENTER</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #92', t => {
+  const input = "[A]\n<? foo=\"><script>alert(1)</script>\">\n<! foo=\"><script>alert(1)</script>\">\n</ foo=\"><script>alert(1)</script>\">\n[B]\n<? foo=\"><x foo=\'?><script>alert(1)</script>\'>\">\n[C]\n<! foo=\"[[[x]]\"><x foo=\"]foo><script>alert(1)</script>\">\n[D]\n<% foo><x foo=\"%><script>alert(1)</script>\">";
+  const output = '[A]\n">\n">\n">\n[B]\n">\n[C]\n\n[D]\n&lt;% foo>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #93', t => {
+  const input = '<div style="background:url(http://foo.f/f oo/;color:red/*/foo.jpg);">X</div>';
+  const output = '<div>X</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #94', t => {
+  const input = '<div style="list-style:url(http://foo.f)\\20url(javascript:alert(1));">X</div>';
+  const output = '<div>X</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #95', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg">\n<handler xmlns:ev="http://www.w3.org/2001/xml-events" ev:event="load">alert(1)</handler>\n</svg>';
+  const output = '\nalert(1)\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #96', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n<feImage>\n<set attributeName="xlink:href" to="data:image/svg+xml;charset=utf-8;base64,\nPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxzY3JpcHQ%2BYWxlcnQoMSk8L3NjcmlwdD48L3N2Zz4NCg%3D%3D"/>\n</feImage>\n</svg>';
+  const output = '\n\n\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #97', t => {
+  const input = '<iframe src=mhtml:http://html5sec.org/test.html!xss.html></iframe>\n<iframe src=mhtml:http://html5sec.org/test.gif!xss.html></iframe>';
+  const output = '\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #98', t => {
+  const input = "<!-- IE 5-9 -->\r\n<div id=d><x xmlns=\"><iframe onload=alert(1)\"></div>\n<script>d.innerHTML+=\'\';</script>\r\n\r\n<!-- IE 10 in IE5-9 Standards mode -->\r\n<div id=d><x xmlns=\'\"><iframe onload=alert(2)//\'></div>\n<script>d.innerHTML+=\'\';</script>";
+  const output = '\n<div id="d"></div>\n\n\n\n<div id="d"></div>\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #99', t => {
+  const input = "<div id=d><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n<script>with(document.getElementById(\"d\"))innerHTML=innerHTML</script>";
+  const output = "<div id=\"d\"><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n";
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #100', t => {
+  const input = 'XXX<style>\r\n\r\n*{color:gre/**/en !/**/important} /* IE 6-9 Standards mode */\r\n\r\n<!--\r\n--><!--*{color:red} /* all UA */\r\n\r\n*{background:url(xx:x //**/\\red/*)} /* IE 6-7 Standards mode */\r\n\r\n</style>';
+  const output = 'XXX';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #101', t => {
+  const input = '<img[a][b]src=x[d]onerror[c]=[e]"alert(1)">';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #102', t => {
+  const input = '<a href="[a]java[b]script[c]:alert(1)">XXX</a>';
+  const output = '<a href="%5Ba%5Djava%5Bb%5Dscript%5Bc%5D:alert(1)">XXX</a>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #103', t => {
+  const input = '<img src="x` `<script>alert(1)</script>"` `>';
+  const output = '<img src="x%60%20%60%3Cscript%3Ealert(1)%3C/script%3E" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #104', t => {
+  const input = "<script>history.pushState(0,0,\'/i/am/somewhere_else\');</script>";
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #105', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg" id="foo">\r\n<x xmlns="http://www.w3.org/2001/xml-events" event="load" observer="foo" handler="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Chandler%20xml%3Aid%3D%22bar%22%20type%3D%22application%2Fecmascript%22%3E alert(1) %3C%2Fhandler%3E%0A%3C%2Fsvg%3E%0A#bar"/>\r\n</svg>';
+  const output = '\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #106', t => {
+  const input = '<iframe src="data:image/svg-xml,%1F%8B%08%00%00%00%00%00%02%03%B3)N.%CA%2C(Q%A8%C8%CD%C9%2B%B6U%CA())%B0%D2%D7%2F%2F%2F%D7%2B7%D6%CB%2FJ%D77%B4%B4%B4%D4%AF%C8(%C9%CDQ%B2K%CCI-*%D10%D4%B4%D1%87%E8%B2%03"></iframe>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #107', t => {
+  const input = "<img src onerror /\" \'\"= alt=alert(1)//\">";
+  const output = '<img src />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #108', t => {
+  const input = '<title onpropertychange=alert(1)></title><title title=></title>';
+  const output = '';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #109', t => {
+  const input = '<!-- IE 5-8 standards mode -->\r\n<a href=http://foo.bar/#x=`y></a><img alt="`><img src=xx:x onerror=alert(1)></a>">\r\n\r\n<!-- IE 5-9 standards mode -->\r\n<!a foo=x=`y><img alt="`><img src=xx:x onerror=alert(2)//">\r\n<?a foo=x=`y><img alt="`><img src=xx:x onerror=alert(3)//">';
+  const output = '\n<a href="http://foo.bar/#x&#61;&#96;y"></a><img alt="`><img src=xx:x onerror=alert(1)></a>" />\n\n\n<img alt="`><img src=xx:x onerror=alert(2)//" />\n<img alt="`><img src=xx:x onerror=alert(3)//" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #110', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg">\n<a id="x"><rect fill="white" width="1000" height="1000"/></a>\n<rect fill="white" style="clip-path:url(test3.svg#a);fill:url(#b);filter:url(#c);marker:url(#d);mask:url(#e);stroke:url(#f);"/>\n</svg>';
+  const output = '\n<a id="x"></a>\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #111', t => {
+  const input = '<svg xmlns="http://www.w3.org/2000/svg">\r\n<path d="M0,0" style="marker-start:url(test4.svg#a)"/>\r\n</svg>';
+  const output = '\n\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #112', t => {
+  const input = '<div style="background:url(/f#[a]oo/;color:red/*/foo.jpg);">X</div>';
+  const output = '<div style="background:url(/f#[a]oo/;color:red/*/foo.jpg);">X</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #113', t => {
+  const input = '<div style="font-family:foo{bar;background:url(http://foo.f/oo};color:red/*/foo.jpg);">X</div>';
+  const output = '<div>X</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #114', t => {
+  const input = '<div id="x">XXX</div>\n<style>\n\n#x{font-family:foo[bar;color:green;}\n\n#y];color:red;{}\n\n</style>';
+  const output = '<div id="x">XXX</div>\n';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify html5sec #115', t => {
+  const input = "<x style=\"background:url(\'x[a];color:red;/*\')\">XXX</x>";
+  const output = 'XXX';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
 test('purify general #1', t => {
   const input = '<script> do_evil1() </script>evil script 1';
   const output = 'evil script 1';
