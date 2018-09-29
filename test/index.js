@@ -1049,6 +1049,111 @@ test('purify general #35', t => {
   t.is(purify, output);
 });
 
+test('purify general #36', t => {
+  const input = '<div style="color:bad(( blue ) green ) green">parenthesis test 4</div>';
+  const output = '<div>parenthesis test 4</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #37', t => {
+  const input = '<div style="color:))))) green">parenthesis test 5</div>';
+  const output = '<div>parenthesis test 5</div>';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #38', t => {
+  const input = '<img />';
+  const output = '<img />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #39', t => {
+  const input = '<img id="foo" />';
+  const output = '<img id="foo" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #40', t => {
+  const input = '<option selected />';
+  const output = '<option selected />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #41', t => {
+  const input = '<img id="foo" / src="bar.com">';
+  const output = '<img id="foo" src="bar.com" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #42', t => {
+  const input = '<img/>';
+  const output = '<img />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #43', t => {
+  const input = '<img id="foo"/>';
+  const output = '<img id="foo" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #44', t => {
+  const input = '<option selected/>';
+  const output = '<option selected />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #45', t => {
+  const input = "<img id=\'foo\'/>";
+  const output = '<img id="foo" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #46', t => {
+  const input = "<img id=\'foo\' />";
+  const output = '<img id="foo" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #47', t => {
+  const input = '<img id="" />';
+  const output = '<img id="" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #48', t => {
+  const input = "<img id=\'\' />";
+  const output = '<img id="" />';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #49', t => {
+  const input = ' 123 --> abc';
+  const output = ' 123 --> abc';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
+test('purify general #50', t => {
+  const input = 'abc <!-- 123';
+  const output = 'abc ';
+  const purify = thinkPurify.think.purify(input);
+  t.is(purify, output);
+});
+
 test('purify context', t => {
   const input = '<form id="test"></form><button form="test" formaction="javascript:alert(1)">X</button>';
   const output = '<form id="test"></form><button form="test" formaction="x-javascript:alert(1)">X</button>';
